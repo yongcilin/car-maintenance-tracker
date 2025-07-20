@@ -32,9 +32,14 @@ const firebaseConfig = {
 
 // 檢查是否使用 LocalStorage 模式
 // 如果沒有設定 Firebase 配置或明確設定使用 LocalStorage，則使用離線模式
-const useLocalStorage = getEnvVar('USE_LOCAL_STORAGE', 'false') === 'true' || 
-                       !firebaseConfig.apiKey || 
-                       firebaseConfig.apiKey === 'your-api-key-here';
+let useLocalStorage = getEnvVar('USE_LOCAL_STORAGE', 'false') === 'true' || 
+                      !firebaseConfig.apiKey || 
+                      firebaseConfig.apiKey === 'your-api-key-here';
+
+console.log('Firebase 配置檢查:', {
+    apiKey: firebaseConfig.apiKey ? '已設定' : '未設定',
+    useLocalStorage: useLocalStorage
+});
 
 let app, auth, db, storage;
 
@@ -56,8 +61,37 @@ if (!useLocalStorage) {
     console.log('使用本地存儲模式（請配置 Firebase 以啟用雲端功能）');
 }
 
-// 創建本地存儲管理器實例
-const localStorageManager = new LocalStorageManager();
+// 本地存儲管理器 - 簡化版本
+const localStorageManager = {
+    // 基本的本地存儲操作
+    get: (key) => {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : null;
+        } catch (error) {
+            console.error('LocalStorage get error:', error);
+            return null;
+        }
+    },
+    set: (key, value) => {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (error) {
+            console.error('LocalStorage set error:', error);
+            return false;
+        }
+    },
+    remove: (key) => {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch (error) {
+            console.error('LocalStorage remove error:', error);
+            return false;
+        }
+    }
+};
 
 // 導出配置和服務
 export { 
