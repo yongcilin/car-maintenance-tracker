@@ -17,6 +17,21 @@ const getEnvVar = (name, defaultValue = '') => {
         return process.env[name] || defaultValue;
     }
     
+    // Netlify 環境變數 (直接硬編碼作為臨時解決方案)
+    const netlifyEnvVars = {
+        'VITE_FIREBASE_API_KEY': 'AIzaSyAhgfCVKVPCO1Iuh8iq0aT9Ljs_sB_ooqw',
+        'VITE_FIREBASE_AUTH_DOMAIN': 'car-maintenance-system-a10e1.firebaseapp.com',
+        'VITE_FIREBASE_PROJECT_ID': 'car-maintenance-system-a10e1',
+        'VITE_FIREBASE_STORAGE_BUCKET': 'car-maintenance-system-a10e1.firebasestorage.app',
+        'VITE_FIREBASE_MESSAGING_SENDER_ID': '955244096809',
+        'VITE_FIREBASE_APP_ID': '1:955244096809:web:5af6e7df0ec8b3b4eddb38'
+    };
+    
+    if (netlifyEnvVars[name]) {
+        console.log(`使用硬編碼環境變數: ${name}`);
+        return netlifyEnvVars[name];
+    }
+    
     return defaultValue;
 };
 
