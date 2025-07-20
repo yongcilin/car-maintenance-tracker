@@ -61,7 +61,7 @@ if (!useLocalStorage) {
     console.log('使用本地存儲模式（請配置 Firebase 以啟用雲端功能）');
 }
 
-// 本地存儲管理器 - 簡化版本
+// 本地存儲管理器 - 完整版本
 const localStorageManager = {
     // 基本的本地存儲操作
     get: (key) => {
@@ -90,6 +90,103 @@ const localStorageManager = {
             console.error('LocalStorage remove error:', error);
             return false;
         }
+    },
+    
+    // 使用者管理方法
+    getCurrentUser: () => {
+        return localStorageManager.get('currentUser');
+    },
+    
+    setCurrentUser: (user) => {
+        return localStorageManager.set('currentUser', user);
+    },
+    
+    removeCurrentUser: () => {
+        return localStorageManager.remove('currentUser');
+    },
+    
+    // 使用者註冊和登入
+    registerUser: (email, password, userData = {}) => {
+        const users = localStorageManager.get('users') || {};
+        if (users[email]) {
+            throw new Error('使用者已存在');
+        }
+        
+        const user = {
+            uid: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            email: email,
+            password: password, // 注意：實際應用中不應明文存儲密碼
+            ...userData,
+            createdAt: new Date().toISOString()
+        };
+        
+        users[email] = user;
+        localStorageManager.set('users', users);
+        return user;
+    },
+    
+    loginUser: (email, password) => {
+        const users = localStorageManager.get('users') || {};
+        const user = users[email];
+        
+        if (!user || user.password !== password) {
+            throw new Error('帳號或密碼錯誤');
+        }
+        
+        const currentUser = { ...user };
+        delete currentUser.password; // 不在當前使用者中保存密碼
+        localStorageManager.setCurrentUser(currentUser);
+        return currentUser;
+    },
+    
+    logoutUser: () => {
+        localStorageManager.removeCurrentUser();
+    },
+    
+    // 資料管理方法
+    getUserData: (userId, collection) => {
+        const key = `${userId}_${collection}`;
+        return localStorageManager.get(key) || [];
+    },
+    
+    setUserData: (userId, collection, data) => {
+        const key = `${userId}_${collection}`;
+        return localStorageManager.set(key, data);
+    },
+    
+    addUserData: (userId, collection, item) => {
+        const data = localStorageManager.getUserData(userId, collection);
+        const newItem = {
+            ...item,
+            id: item.id || Date.now().toString(),
+            createdAt: item.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        data.push(newItem);
+        localStorageManager.setUserData(userId, collection, data);
+        return newItem;
+    },
+    
+    updateUserData: (userId, collection, itemId, updates) => {
+        const data = localStorageManager.getUserData(userId, collection);
+        const index = data.findIndex(item => item.id === itemId);
+        if (index !== -1) {
+            data[index] = {
+                ...data[index],
+                ...updates,
+                updatedAt: new Date().toISOString()
+            };
+            localStorageManager.setUserData(userId, collection, data);
+            return data[index];
+        }
+        return null;
+    },
+    
+    deleteUserData: (userId, collection, itemId) => {
+        const data = localStorageManager.getUserData(userId, collection);
+        const filteredData = data.filter(item => item.id !== itemId);
+        localStorageManager.setUserData(userId, collection, filteredData);
+        return true;
     }
 };
 

@@ -49,7 +49,7 @@ class AuthManager {
     async register(email, password, displayName) {
         try {
             if (useLocalStorage) {
-                const user = await localStorageManager.createUser(email, password, displayName);
+                const user = localStorageManager.registerUser(email, password, { displayName });
                 this.currentUser = user;
                 this.notifyAuthStateChange();
                 return user;
@@ -68,7 +68,7 @@ class AuthManager {
     async login(email, password) {
         try {
             if (useLocalStorage) {
-                const user = await localStorageManager.signInUser(email, password);
+                const user = localStorageManager.loginUser(email, password);
                 this.currentUser = user;
                 this.notifyAuthStateChange();
                 return user;
@@ -86,7 +86,7 @@ class AuthManager {
     async logout() {
         try {
             if (useLocalStorage) {
-                await localStorageManager.signOutUser();
+                localStorageManager.logoutUser();
                 this.currentUser = null;
                 this.notifyAuthStateChange();
             } else {
