@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas Car Only</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="alternate icon" href="favicon.ico">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="bi bi-car-front"></i> Gas Car Only</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('dashboard')">
+                            <i class="bi bi-speedometer2"></i> 儀表板
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('vehicles')">
+                            <i class="bi bi-car-front-fill"></i> 車輛管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('serviceShops')">
+                            <i class="bi bi-shop"></i> 保養廠管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('maintenance')">
+                            <i class="bi bi-tools"></i> 新增保養記錄
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('history')">
+                            <i class="bi bi-clock-history"></i> 歷史查詢
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPage('reports')">
+                            <i class="bi bi-graph-up"></i> 統計報表
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown" id="userMenu" style="display: none;">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> <span id="userName"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showPage('profile')">
+                                <i class="bi bi-person"></i> 個人資料
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="bi bi-box-arrow-right"></i> 登出
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item" id="loginBtn">
+                        <a class="nav-link" href="#" onclick="showPage('login')">
+                            <i class="bi bi-box-arrow-in-right"></i> 登入
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-3">
+        <!-- Login Page -->
+        <div id="loginPage" class="page-content">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h4><i class="bi bi-car-front"></i> Gas Car Only</h4>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="authTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button">登入</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button">註冊</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content mt-3" id="authTabContent">
+                                <!-- Login Form -->
+                                <div class="tab-pane fade show active" id="login" role="tabpanel">
+                                    <form id="loginForm">
+                                        <div class="mb-3">
+                                            <label for="loginEmail" class="form-label">電子郵件</label>
+                                            <input type="email" class="form-control" id="loginEmail" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="loginPassword" class="form-label">密碼</label>
+                                            <input type="password" class="form-control" id="loginPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">登入</button>
+                                    </form>
+                                    <div class="text-center mt-3">
+                                        <a href="#" onclick="resetPassword()">忘記密碼？</a>
+                                    </div>
+                                </div>
+                                <!-- Register Form -->
+                                <div class="tab-pane fade" id="register" role="tabpanel">
+                                    <form id="registerForm">
+                                        <div class="mb-3">
+                                            <label for="registerName" class="form-label">姓名</label>
+                                            <input type="text" class="form-control" id="registerName" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="registerEmail" class="form-label">電子郵件</label>
+                                            <input type="email" class="form-control" id="registerEmail" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="registerPassword" class="form-label">密碼</label>
+                                            <input type="password" class="form-control" id="registerPassword" required minlength="6">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="confirmPassword" class="form-label">確認密碼</label>
+                                            <input type="password" class="form-control" id="confirmPassword" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-success w-100">註冊</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage" class="page-content" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="bi bi-speedometer2"></i> 儀表板</h2>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Statistics Cards -->
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="totalVehicles">0</h4>
+                                    <p class="mb-0">車輛數量</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-car-front-fill fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="totalRecords">0</h4>
+                                    <p class="mb-0">保養記錄</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-tools fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="totalCost">NT$ 0</h4>
+                                    <p class="mb-0">總花費</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-currency-dollar fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="avgCost">NT$ 0</h4>
+                                    <p class="mb-0">平均花費</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="bi bi-graph-up fs-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Records -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="bi bi-clock-history"></i> 最近保養記錄</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="recentRecords">
+                                <p class="text-muted">暫無保養記錄</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicles Page -->
+        <div id="vehiclesPage" class="page-content" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2><i class="bi bi-car-front-fill"></i> 車輛管理</h2>
+                        <button class="btn btn-primary" onclick="showAddVehicleModal()">
+                            <i class="bi bi-plus-circle"></i> 新增車輛
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="vehiclesList">
+                <!-- Vehicle cards will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Service Shops Page -->
+        <div id="serviceShopsPage" class="page-content" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2><i class="bi bi-shop"></i> 保養廠管理</h2>
+                        <button class="btn btn-primary" onclick="showAddServiceShopModal()">
+                            <i class="bi bi-plus-circle"></i> 新增保養廠
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="serviceShopsList">
+                <!-- Service shop cards will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Maintenance Page -->
+        <div id="maintenancePage" class="page-content" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="bi bi-tools"></i> 新增保養記錄</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="maintenanceForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="vehicleSelect" class="form-label">選擇車輛</label>
+                                        <select class="form-select" id="vehicleSelect" required>
+                                            <option value="">請選擇車輛</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="maintenanceDate" class="form-label">保養日期</label>
+                                        <input type="date" class="form-control" id="maintenanceDate" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="serviceShopSelect" class="form-label">保養廠</label>
+                                        <div class="input-group">
+                                            <select class="form-select" id="serviceShopSelect">
+                                                <option value="">請選擇保養廠</option>
+                                            </select>
+                                            <button type="button" class="btn btn-outline-secondary" onclick="showAddServiceShopModal()">
+                                                <i class="bi bi-plus-circle"></i> 新增
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="currentMileage" class="form-label">當前里程數 (公里)</label>
+                                        <input type="number" class="form-control" id="currentMileage" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="totalAmount" class="form-label">總金額 (NT$)</label>
+                                        <input type="number" class="form-control" id="totalAmount" readonly placeholder="系統自動加總，無需手動填寫">
+                                        <div class="form-text text-muted">
+                                            <i class="bi bi-info-circle"></i> 此欄位會根據下方保養項目自動計算總金額
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Maintenance Items -->
+                                <div class="mb-3">
+                                    <label class="form-label">保養項目</label>
+                                    <div id="maintenanceItems">
+                                        <!-- Items will be added here -->
+                                    </div>
+                                    <button type="button" class="btn btn-outline-primary" onclick="addMaintenanceItem()">
+                                        <i class="bi bi-plus-circle"></i> 新增項目
+                                    </button>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="maintenanceNotes" class="form-label">備註</label>
+                                    <textarea class="form-control" id="maintenanceNotes" rows="3"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> 儲存保養記錄
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Page -->
+        <div id="historyPage" class="page-content" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="bi bi-clock-history"></i> 保養歷史</h2>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <select class="form-select" id="filterVehicle">
+                                        <option value="">所有車輛</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <input type="date" class="form-control" id="filterDateFrom" placeholder="開始日期">
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <input type="date" class="form-control" id="filterDateTo" placeholder="結束日期">
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-primary w-100" onclick="filterHistory()">
+                                        <i class="bi bi-search"></i> 搜尋
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 保養項目總表 -->
+            <div id="maintenanceSummaryTable" style="display: none;">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-table"></i> 保養項目總表
+                            <button class="btn btn-sm btn-outline-light float-end" onclick="toggleMaintenanceView()">
+                                <i class="bi bi-list"></i> 切換到記錄列表
+                            </button>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>保養項目</th>
+                                        <th>最後更換里程</th>
+                                        <th>最後更換日期</th>
+                                        <th>當前里程差</th>
+                                        <th>建議週期</th>
+                                        <th>下次建議里程</th>
+                                        <th>狀態</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="maintenanceSummaryBody">
+                                    <!-- Summary data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Results -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">保養記錄列表</h5>
+                                <button class="btn btn-sm btn-outline-light" onclick="toggleMaintenanceView()" id="toggleViewBtn" style="display: none;">
+                                    <i class="bi bi-table"></i> 切換到項目檢視
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="historyResults">
+                                <!-- History records will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reportsPage" class="page-content" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="bi bi-graph-up"></i> 統計報表</h2>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>月度花費趨勢</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>保養項目分布</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>匯出功能</h5>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-outline-danger me-2" onclick="exportToPDF()">
+                                <i class="bi bi-file-earmark-pdf"></i> 匯出 PDF
+                            </button>
+                            <button class="btn btn-outline-success" onclick="exportToExcel()">
+                                <i class="bi bi-file-earmark-excel"></i> 匯出 Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Vehicle Modal -->
+    <div class="modal fade" id="addVehicleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增車輛</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addVehicleForm">
+                        <div class="mb-3">
+                            <label for="vehicleNickname" class="form-label">車輛暱稱</label>
+                            <input type="text" class="form-control" id="vehicleNickname" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="licensePlate" class="form-label">車牌號碼</label>
+                            <input type="text" class="form-control" id="licensePlate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleBrand" class="form-label">品牌</label>
+                            <input type="text" class="form-control" id="vehicleBrand">
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleModel" class="form-label">型號</label>
+                            <input type="text" class="form-control" id="vehicleModel">
+                        </div>
+                        <div class="mb-3">
+                            <label for="vehicleYear" class="form-label">年份</label>
+                            <input type="number" class="form-control" id="vehicleYear" min="1900" max="2030">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveVehicle()">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Service Shop Modal -->
+    <div class="modal fade" id="addServiceShopModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增保養廠</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addServiceShopForm">
+                        <div class="mb-3">
+                            <label for="shopName" class="form-label">保養廠名稱</label>
+                            <input type="text" class="form-control" id="shopName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shopAddress" class="form-label">地址</label>
+                            <input type="text" class="form-control" id="shopAddress">
+                        </div>
+                        <div class="mb-3">
+                            <label for="shopPhone" class="form-label">電話</label>
+                            <input type="tel" class="form-control" id="shopPhone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="shopNotes" class="form-label">備註</label>
+                            <textarea class="form-control" id="shopNotes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveServiceShop()">儲存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="d-none">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">載入中...</span>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Firebase -->
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/database.js"></script>
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
